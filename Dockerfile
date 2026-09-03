@@ -19,4 +19,6 @@ RUN playwright install --with-deps chromium
 
 COPY . .
 
+RUN python manage.py collectstatic --noinput
+
 CMD ["gunicorn", "config.wsgi:application"]
