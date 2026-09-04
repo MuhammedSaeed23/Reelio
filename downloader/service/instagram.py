@@ -88,16 +88,18 @@ def playwright_worker():
             progress[request_id]["percent"]=50
              # GET METADATA
             startm = time.perf_counter()
-            html=page.content()
-            soup=BeautifulSoup(html,"html.parser")
+            # html=page.content()
+            # soup=BeautifulSoup(html,"html.parser")
 
-            thumbnail = soup.find("meta",property="og:image")["content"]
+            # thumbnail = page.locator("meta",property="og:image")["content"]
+            thumbnail = page.locator('meta[property="og:image"]').get_attribute("content")
             print(thumbnail)
             
             progress[request_id]["status"]="thumbnail"
             progress[request_id]["thumbnail"]=thumbnail
             progress[request_id]["percent"]=60
-            discription = soup.find("meta",property="og:description")["content"]
+            # discription = page.locator("meta",property="og:description")["content"]
+            discription = page.locator('meta[property="og:description"]').get_attribute("content")
             print(discription)
             print(f"Metadata: {time.perf_counter() - startm:.3f}s")
             start = time.perf_counter()

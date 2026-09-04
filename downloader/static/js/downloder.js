@@ -58,6 +58,9 @@ function fetchurl(link){
              progressing()
 
         })
+        .catch((error) => {
+    console.error("Download error:", error);
+});
 }
 const down_btn=document.querySelector(".down")
 down_btn.addEventListener("click", async () => {
@@ -148,9 +151,12 @@ function progressing(){
                 document.querySelector(".highlight").style.display = "none";
                 document.querySelector(".error").style.display = "flex";
 
-                document.querySelector(".video-title").textContent = "Unable to process reel".style.color = "#1f34f3";;
+                document.querySelector(".video-title").textContent = "Unable to process reel";
+                
+                document.querySelector(".video-title").style.color = "#f35b1f";
 
-                document.querySelector(".creator").textContent = data.error.style.color = "#ee1515";;
+                document.querySelector(".creator").textContent = data.error;
+                document.querySelector(".creator").style.color = "#ee1515";
 
                 document.querySelector(".meta").style.display = "none";
 
