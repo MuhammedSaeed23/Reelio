@@ -56,9 +56,12 @@ def playwright_worker():
             page=broswer.new_page()            
             print(f"New page: {time.perf_counter() - bros_page:.2f}s")
             pag_goto=time.perf_counter()
-            page.on("response",lambda response:log_request(response,urls))
+            # page.on("response",lambda response:log_request(response,urls,pag_goto))
+            pag_goto = time.perf_counter()
+            page.on("request", lambda request: log_request(request, urls,pag_goto))
             page.goto(url,wait_until="commit")
             print(f"Page goto: {time.perf_counter() - pag_goto:.2f}s")
+
             progress[request_id]["status"]="page_goto"
             progress[request_id]["percent"]=20
             start_wait=time.perf_counter()
@@ -145,8 +148,9 @@ def get_video(url):
     return request_id
 
 
-def log_request(response , urls,):
+def log_request(response , urls,pag_goto):
     filter_start = time.perf_counter()
+    # print("CALLED FROM:", type(response).__name__)
     data=response.url
     if ".mp4" not in data:
        return
@@ -170,6 +174,7 @@ def log_request(response , urls,):
         # download(urls["audio"],audio_path)
         print(urls["audio"])
         print("this audio url") 
+        print(f"🎵 AUDIO FOUND: {time.perf_counter() - pag_goto:.3f}s")
         print(f"🎵 Audio filter: {time.perf_counter() - filter_start:.6f}s")
 
     elif"dash_baseline" in tag.lower() and urls["video"] is None:
@@ -178,6 +183,7 @@ def log_request(response , urls,):
         # download(urls["video"],vedio_path)
         print(urls["video"])
         print("this vedio url") 
+        print(f"🎥 VIDEO FOUND: {time.perf_counter() - pag_goto:.3f}s")
         print(f"🎥 Video filter: {time.perf_counter() - filter_start:.6f}s")
         
 def is_instagram_reel(url):
