@@ -321,8 +321,9 @@ function reset(){
     loader.style.display="flex"
     thumb.style.display="none"
     const tags=document.querySelectorAll(".comp")
-    tags.classList.remove("glow")
-    tags.classList.remove("focus")
+    tags.forEach(tag => {
+    tag.classList.remove("glow", "focus");
+});
     const creator=document.querySelector(".video-title")
     creator.innerText="Sunset sessions 🌅"
     creator.style.color="#F8FAFC"
