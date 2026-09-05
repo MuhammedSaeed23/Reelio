@@ -53,12 +53,24 @@ def playwright_worker():
             audio_path = os.path.join(folder, "audio.mp4")
             output_path = os.path.join(folder, "output.mp4")
             bros_page=time.perf_counter()
-            page=broswer.new_page()            
+            page=broswer.new_page()
+            page.route(
+                 "**/*",
+                lambda route: (
+                     route.abort()
+                     if(
+                            route.request.resource_type in ["image", "stylesheet", "font"]
+                            or "api/graphql" in route.request.url
+                            # or "/ajax/bz" in route.request.url
+                     )
+                     else route.continue_()
+                   )
+                )            
             print(f"New page: {time.perf_counter() - bros_page:.2f}s")
             pag_goto=time.perf_counter()
             # page.on("response",lambda response:log_request(response,urls,pag_goto))
             pag_goto = time.perf_counter()
-            page.on("request", lambda request: log_request(request, urls,pag_goto))
+            page.on("request", lambda request: log_request(request, urls))
             page.goto(url,wait_until="commit")
             print(f"Page goto: {time.perf_counter() - pag_goto:.2f}s")
 
@@ -91,17 +103,12 @@ def playwright_worker():
             progress[request_id]["percent"]=50
              # GET METADATA
             startm = time.perf_counter()
-            # html=page.content()
-            # soup=BeautifulSoup(html,"html.parser")
-
-            # thumbnail = page.locator("meta",property="og:image")["content"]
             thumbnail = page.locator('meta[property="og:image"]').get_attribute("content")
             print(thumbnail)
             
             progress[request_id]["status"]="thumbnail"
             progress[request_id]["thumbnail"]=thumbnail
             progress[request_id]["percent"]=60
-            # discription = page.locator("meta",property="og:description")["content"]
             discription = page.locator('meta[property="og:description"]').get_attribute("content")
             print(discription)
             print(f"Metadata: {time.perf_counter() - startm:.3f}s")
@@ -148,7 +155,7 @@ def get_video(url):
     return request_id
 
 
-def log_request(response , urls,pag_goto):
+def log_request(response , urls,):
     filter_start = time.perf_counter()
     # print("CALLED FROM:", type(response).__name__)
     data=response.url
@@ -174,7 +181,6 @@ def log_request(response , urls,pag_goto):
         # download(urls["audio"],audio_path)
         print(urls["audio"])
         print("this audio url") 
-        print(f"🎵 AUDIO FOUND: {time.perf_counter() - pag_goto:.3f}s")
         print(f"🎵 Audio filter: {time.perf_counter() - filter_start:.6f}s")
 
     elif"dash_baseline" in tag.lower() and urls["video"] is None:
@@ -183,7 +189,6 @@ def log_request(response , urls,pag_goto):
         # download(urls["video"],vedio_path)
         print(urls["video"])
         print("this vedio url") 
-        print(f"🎥 VIDEO FOUND: {time.perf_counter() - pag_goto:.3f}s")
         print(f"🎥 Video filter: {time.perf_counter() - filter_start:.6f}s")
         
 def is_instagram_reel(url):

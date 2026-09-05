@@ -160,7 +160,7 @@ def progresing (request,uid):
         return JsonResponse({
             "error":"vedio are not found on server"
         })
-    if data["status"]=="media" and not data["download_started"]:
+    if data["status"]=="complete" and not data["download_started"]:
        data["download_started"]=True
        result={
            "uid":uid,

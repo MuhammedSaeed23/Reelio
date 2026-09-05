@@ -178,7 +178,7 @@ function progressing(){
 
             }
             else{
-            setTimeout(progressing, 500);
+            progressing();
             }
         
          })
@@ -319,11 +319,16 @@ function reset(){
     const loader=document.querySelector(".rotate")
     const thumb=document.querySelector(".highlight")
     loader.style.display="flex"
-    thumb.style.display="none"    
+    thumb.style.display="none"
+    const tags=document.querySelectorAll(".comp")
+    tags.classList.remove("glow")
+    tags.classList.remove("focus")
     const creator=document.querySelector(".video-title")
     creator.innerText="Sunset sessions 🌅"
+    creator.style.color="#F8FAFC"
     const capt=document.querySelector(".creator")
     capt.innerText="by vibes.daily"
+    capt.style.color="#A1A1AA"
     const bar=document.querySelector(".progress-fill")
     const remain=document.querySelector(".percentage")
     remain.innerText="0%"
